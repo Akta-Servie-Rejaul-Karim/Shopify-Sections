@@ -11,16 +11,23 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
-  .homeLogo .swiper-slide {
-    width: fit-content;
-    margin: 0 15px;
+ .homeLogo .swiper-slide {
+    width: fit-content;   
+    height: {{ section.settings.slide_height }}px;
+    display: flex;
+    align-items: center;
+}
+ .homeLogo .swiper-slide img{
+    width: 100%;   
+    height: 100%;
+    display: block;   
   }
   .homeLogo .swiper-wrapper {
     align-items: center;
     transition-timing-function: linear !important;
   }
   .home-logo-img {
-    max-width: 170px;
+    max-width: {{ section.settings.item_max_width }}px;
     display: flex;
     align-items: center;
   }
@@ -91,7 +98,7 @@
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:global.colors.scheme",
+      "label": "color scheme",
       "default": "scheme-1"
     }, 
     {
@@ -114,9 +121,9 @@
     {
       "type": "range",
       "id": "speed_seconds",
-      "min": 0.1,
+      "min": 1,
       "max": 10,
-      "step": 0.1,
+      "step": 0.5,
       "unit": "s",
       "label": "Transition Speed (seconds)",
       "default": 3
@@ -126,6 +133,18 @@
       "id": "loop",
       "label": "Enable Loop",
       "default": false
+    },
+    {
+      "type": "number",
+      "id": "item_max_width",
+      "label": "Slide Item max Width",
+      "default": 170     
+    },
+    {
+      "type": "number",
+      "id": "slide_height",
+      "label": "Slide Items Height",
+      "default": 100     
     },
     {
       "type": "range",
