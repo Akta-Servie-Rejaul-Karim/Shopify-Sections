@@ -1,0 +1,251 @@
+{% assign tag_list = section.settings.target_tags | split: ',' %}
+{% assign matched = false %}
+
+{% if template contains 'product' and product %}
+  {% for tag in tag_list %}
+    {% assign tag_trimmed = tag | strip %}
+    {% if product.tags contains tag_trimmed %}
+      {% assign matched = true %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if matched %}
+  <style>
+      /* common css end  */
+      .announcement-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      .announcement-bar {
+        padding-top: {{ section.settings.pt}}px;
+        padding-bottom: {{ section.settings.pb}}px;
+      }
+
+      .announcement-bar-content {
+        text-align: center;
+      }
+    .ann_title{
+      font-size: {{- section.settings.ann_title_size -}}px;
+    }
+      .announcement-bar-content strong {
+        font-weight: {{ section.settings.top_fw }};
+        line-height: 1;
+        margin-bottom: {{ section.settings.m_bottom }}px;
+        display: block;
+      }
+
+      .announcement-bar-content p {
+        font-size: {{ section.settings.text_size }}px;
+        line-height: 1;
+        font-weight: {{ section.settings.text_fw }};
+      }
+    @media only screen and (max-width: 768px){
+      .announcement-bar-content p {
+        font-size: {{ section.settings.text_size_m }}px;
+      }
+      .ann_title{
+      font-size: {{- section.settings.ann_title_size_m -}}px;
+    }
+    }
+  </style>
+  <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+    <div class="announcement-container">
+      <div class="announcement-bar-content">
+        <strong class="ann_title" style=" ">
+          {{- section.settings.ann_title -}}
+        </strong>
+        {{ section.settings.text }}
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% schema %}
+{
+  "name": "Sale Announcement",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Tags "
+    },
+    {
+      "type": "textarea",
+      "id": "target_tags",
+      "label": "Trigger Tags",
+      "default": "sale announcement",
+      "info": "Enter a single tag (e.g., 'sale') or multiple tags separated by commas (e.g., 'sale, promo, flash-deal')."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Padding Top",
+      "default": 15,
+      "min": 0,
+      "max": 100,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Padding Bottom",
+      "default": 15,
+      "min": 0,
+      "max": 100,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "ann_title",
+      "label": "Title",
+      "default": "LEI OF LOVE"
+    },
+    {
+      "type": "range",
+      "id": "ann_title_size",
+      "label": "Font Size",
+      "default": 16,
+      "min": 10,
+      "max": 40,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "ann_title_size_m",
+      "label": "Font Size (Mobile)",
+      "default": 16,
+      "min": 10,
+      "max": 40,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "top_fw",
+      "label": "Title Font Weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "100",
+          "label": "Thin"
+        },
+        {
+          "value": "200",
+          "label": "Extra Light"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },    
+    {
+      "type": "range",
+      "id": "m_bottom",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Spacing Bottom",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Jetzt für 69 €* shoppen & ein <strong>kostenloses Schmuckstück</strong> auswählen!</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text Font Size",
+      "default": 16,
+      "min": 10,
+      "max": 30,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "text_size_m",
+      "label": "Text Font Size (Mobile)",
+      "default": 16,
+      "min": 10,
+      "max": 30,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "text_fw",
+      "label": "Text Font Weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "100",
+          "label": "Thin"
+        },
+        {
+          "value": "200",
+          "label": "Extra Light"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    }
+
+  ],
+  "presets": [
+    {
+      "name": "Sale Announcement",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
