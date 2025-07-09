@@ -14,6 +14,10 @@
     <p>This is Popup 1</p>
   </div>
 </div>
+
+<!-- Buttons that trigger popups -->
+<button class="popup-trigger" data-popup="#popup1">Open Popup 1</button>
+<button class="popup-trigger" data-popup="#popup2">Open Popup 2</button>
  */
 class PopupManager {
   constructor(triggerSelector, closeSelector) {
