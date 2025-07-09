@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Accordion - Multiple Open Allowed</title>
+  <style>
+    /*
+     * Styles for the <my-accordion> custom component.
+     * Adjust or override styles as needed.
+     */
+    my-accordion {
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Separate items with a border */
+    my-accordion .accordion-item + .accordion-item {
+      border-top: 1px solid #ddd;
+    }
+
+    /* Header styles */
+    my-accordion .accordion-header {
+      background: #f6f6f6;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Active header highlight */
+    my-accordion .accordion-item.active .accordion-header {
+      background: #e0e0e0;
+    }
+
+    /* Content container styles - initially collapsed */
+    my-accordion .accordion-content {
+      padding: 0 14px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    USAGE:
+    Place this component anywhere in your HTML.
+    Structure:
+
+    <my-accordion>
+      <div class="accordion-item">
+        <div class="accordion-header">Header Text</div>
+        <div class="accordion-content">
+          Content goes here.
+        </div>
+      </div>
+       Repeat .accordion-item as needed 
+    </my-accordion>
+
+    This accordion allows multiple items to be open at the same time.
+    Clicking a header toggles that item open or closed independently.
+  -->
+
+  <my-accordion>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 1</div>
+      <div class="accordion-content">
+        <p>Content for section 1.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 2</div>
+      <div class="accordion-content">
+        <p>Content for section 2.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 3</div>
+      <div class="accordion-content">
+        <p>Content for section 3.</p>
+      </div>
+    </div>
+  </my-accordion>
+
+  <script>
+    /**
+     * Custom Web Component: <my-accordion>
+     * 
+     * Behavior:
+     * - Manages multiple accordion items (.accordion-item) inside itself.
+     * - Each item can be opened or closed independently.
+     * - Clicking an .accordion-header toggles that item's content.
+     * - Uses smooth CSS transition for max-height for animation.
+     * - Adds/removes 'active' class on .accordion-item to reflect state.
+     * 
+     * Usage:
+     * - Include one or more <my-accordion> elements in your HTML.
+     * - Inside each, create one or more .accordion-item elements.
+     * - Each .accordion-item must have a .accordion-header and .accordion-content.
+     * 
+     * Styling:
+     * - Style via CSS targeting my-accordion and children.
+     * - Active item headers get the 'active' class styling.
+     */
+    class MyAccordion extends HTMLElement {
+      connectedCallback() {
+        // Select all accordion items inside this component
+        const items = this.querySelectorAll('.accordion-item');
+
+        items.forEach(item => {
+          const header = item.querySelector('.accordion-header');
+          const content = item.querySelector('.accordion-content');
+
+          // Skip if required elements are missing
+          if (!header || !content) return;
+
+          // Initialize content styles for animation
+          content.style.overflow = 'hidden';
+          content.style.transition = 'max-height 0.3s ease';
+          content.style.maxHeight = '0px';
+
+          // Add click listener to toggle open/close
+          header.addEventListener('click', () => {
+            // Toggle 'active' class on the item
+            const isActive = item.classList.toggle('active');
+
+            // Animate max-height for smooth transition
+            if (isActive) {
+              content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+              content.style.maxHeight = '0px';
+            }
+          });
+        });
+      }
+    }
+
+    // Define the custom element
+    customElements.define('my-accordion', MyAccordion);
+  </script>
+
+</body>
+</html>

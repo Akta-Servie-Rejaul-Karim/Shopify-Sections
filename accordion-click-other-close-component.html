@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reusable Accordion Component</title>
+  <style>
+    /*
+     * Styles for the custom <my-accordion> component.
+     * Adjust these styles or override them externally as needed.
+     */
+
+    my-accordion {
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    my-accordion .accordion-item + .accordion-item {
+      border-top: 1px solid #ddd;
+    }
+
+    my-accordion .accordion-header {
+      background: #f6f6f6;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    my-accordion .accordion-item.active .accordion-header {
+      background: #e0e0e0;
+    }
+
+    my-accordion .accordion-content {
+      padding: 0 14px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    Usage Example:
+
+    Wrap your accordion items inside <my-accordion>.
+    Each item needs .accordion-item wrapper,
+    with .accordion-header and .accordion-content inside.
+
+    Multiple <my-accordion> can coexist independently.
+
+    You can style <my-accordion> and its children via CSS as desired.
+  -->
+
+  <my-accordion>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 1</div>
+      <div class="accordion-content">
+        <p>This is content for section 1.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 2</div>
+      <div class="accordion-content">
+        <p>This is content for section 2.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Section 3</div>
+      <div class="accordion-content">
+        <p>This is content for section 3.</p>
+      </div>
+    </div>
+  </my-accordion>
+
+  <my-accordion>
+    <div class="accordion-item">
+      <div class="accordion-header">Another Accordion - Item 1</div>
+      <div class="accordion-content">
+        <p>Content for second accordion's first item.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Another Accordion - Item 2</div>
+      <div class="accordion-content">
+        <p>Content for second accordion's second item.</p>
+      </div>
+    </div>
+  </my-accordion>
+
+  <script>
+    /**
+     * Custom Accordion Web Component
+     *
+     * Features:
+     * - Supports multiple accordion items inside one <my-accordion>
+     * - Only one item can be open at a time per accordion
+     * - Smooth open/close animation using max-height transition
+     * - Toggles 'active' class on the open item for styling
+     * - Independent behavior per <my-accordion> element on the page
+     *
+     * Usage:
+     * <my-accordion>
+     *   <div class="accordion-item">
+     *     <div class="accordion-header">Header</div>
+     *     <div class="accordion-content">Content here</div>
+     *   </div>
+     *   ...
+     * </my-accordion>
+     */
+
+    class MyAccordion extends HTMLElement {
+      connectedCallback() {
+        const items = this.querySelectorAll('.accordion-item');
+
+        items.forEach(item => {
+          const header = item.querySelector('.accordion-header');
+          const content = item.querySelector('.accordion-content');
+
+          if (!header || !content) return;
+
+          // Initial styles for smooth animation
+          content.style.overflow = 'hidden';
+          content.style.transition = 'max-height 0.3s ease';
+          content.style.maxHeight = '0px';
+
+          header.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+
+            // Close all items first
+            items.forEach(i => {
+              i.classList.remove('active');
+              const c = i.querySelector('.accordion-content');
+              if (c) c.style.maxHeight = '0px';
+            });
+
+            // Open clicked item if it was not active
+            if (!isActive) {
+              item.classList.add('active');
+              content.style.maxHeight = content.scrollHeight + 'px';
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('my-accordion', MyAccordion);
+  </script>
+
+</body>
+</html>
