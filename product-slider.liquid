@@ -1,0 +1,217 @@
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<style>
+.product-main-slider {
+  width: 100%;
+  margin-bottom: 15px;
+}
+.product-main-slider .swiper-slide {
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+ }
+.product-main-slider .swiper-slide img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;    
+  border-radius: 10px;
+  display: block;
+}
+
+
+.product-thumb-slider {
+  width: 100%;
+}
+.product-thumb-slider .swiper-slide {
+  width: 67px;
+  height: 67px;  
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #DCDCDC;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+.product-thumb-slider .swiper-slide-thumb-active {
+  border: 2px solid #0E1B4D;
+  box-sizing: border-box;
+
+}
+.product-thumb-slider .swiper-slide img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  display: block;      
+}
+.product-gallery-button-prev {
+  position: absolute;
+  z-index: 6;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.product-gallery-button-next{
+  position: absolute;
+  z-index: 6;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.gallery--sticky {
+    position: sticky;
+    top: 0;
+ }
+
+ .product--main-pagination {
+    position: absolute !important;
+    z-index: 2;
+    right: 27px;
+    display: flex;
+    justify-content: center;
+    padding-right: 20px;
+    padding-bottom: 10px;
+}
+
+.product--main-pagination .swiper-pagination-bullet{
+    border-radius: 10px;
+    border: 1px solid #DCDCDC;
+    background: #DCDCDC;
+    height: 10px;
+    width: 10px;
+    opacity: 1;
+    transition: 0.3s;
+}
+.product--main-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
+    border-radius: 100px;
+    background: #0E1B4D;
+    width: 26px;
+    opacity: 1;
+}
+
+
+
+
+</style>
+<div class=" {% if section.settings.enable_sticky_info %} gallery--sticky {% endif %}">
+  
+  <div class="swiper product-main-slider">
+    <div class="swiper-wrapper">
+      {% for media in product.media %}
+        {% if media.media_type == 'image' %}
+          <div class="swiper-slide" data-media-id="{{ media.id }}">
+            <img src="{{ media | img_url: 'master' }}" {%- unless forloop.first -%}loading="lazy"{%- endunless -%} alt="{{ media.alt | escape }}">
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <!-- Navigation buttons -->
+    <div class="product-gallery-button-prev">
+      <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none">
+        <circle cx="19.5" cy="19.5" r="19.5" fill="#0E1B4D"/>
+        <path d="M11.2929 18.2929C10.9024 18.6834 10.9024 19.3166 11.2929 19.7071L17.6569 26.0711C18.0474 26.4616 18.6805 26.4616 19.0711 26.0711C19.4616 25.6805 19.4616 25.0474 19.0711 24.6569L13.4142 19L19.0711 13.3431C19.4616 12.9526 19.4616 12.3195 19.0711 11.9289C18.6805 11.5384 18.0474 11.5384 17.6569 11.9289L11.2929 18.2929ZM28 19L28 18L12 18L12 19L12 20L28 20L28 19Z" fill="white"/>
+      </svg>
+    </div>
+    <div class="product-gallery-button-next">
+      <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none">
+        <circle cx="19.5" cy="19.5" r="19.5" fill="#0E1B4D"/>
+        <path d="M28.7071 18.2929C29.0976 18.6834 29.0976 19.3166 28.7071 19.7071L22.3431 26.0711C21.9526 26.4616 21.3195 26.4616 20.9289 26.0711C20.5384 25.6805 20.5384 25.0474 20.9289 24.6569L26.5858 19L20.9289 13.3431C20.5384 12.9526 20.5384 12.3195 20.9289 11.9289C21.3195 11.5384 21.9526 11.5384 22.3431 11.9289L28.7071 18.2929ZM12 19L12 18L28 18L28 19L28 20L12 20L12 19Z" fill="white"/>
+      </svg>
+    </div>
+    <div class="product--main-pagination"></div>
+
+
+
+
+  </div>
+
+  <div class="swiper product-thumb-slider">
+    <div class="swiper-wrapper">
+      {% for media in product.media %}
+        {% if media.media_type == 'image' %}
+          <div class="swiper-slide" data-media-id="{{ media.id }}">
+            <img src="{{ media | img_url: 'master' }}" loading="lazy" alt="{{ media.alt | escape }}">
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+    {% when 'product_review_slider' %}
+      {%- render 'product-review-slider', block: block -%}
+    {% endcase %}
+  {% endfor %}
+</div>
+
+
+   
+
+          // Dispatch event for other components need  this  variant update event for work 
+          this.dispatchEvent(new CustomEvent('variant:update', {
+            detail: {
+              variant: variant,
+              mediaId: variant?.featured_media?.id
+            },
+            bubbles: true
+          }));
+ 
+
+
+
+<script>
+  let mainSwiper, thumbSwiper;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize thumbnail Swiper
+    thumbSwiper = new Swiper('.product-thumb-slider', {
+      spaceBetween: 10,
+      slidesPerView: 'auto',
+      freeMode: true,
+      watchSlidesProgress: true,
+    });
+
+    // Initialize main Swiper
+    mainSwiper = new Swiper('.product-main-slider', {
+      spaceBetween: 10,
+      loop: true,
+      navigation: {
+        nextEl: '.product-gallery-button-next',
+        prevEl: '.product-gallery-button-prev',
+      },
+      thumbs: {
+        swiper: thumbSwiper,
+      },
+      pagination: {
+        el: ".product--main-pagination",
+        clickable: true,
+      },
+    });
+
+    // Listen for variant:update
+    document.addEventListener('variant:update', (e) => {
+      const mediaId = e.detail.mediaId;
+      if (!mediaId || !mainSwiper) return;
+
+      // Find the matching slide index by data-media-id
+      const slides = document.querySelectorAll('.product-main-slider .swiper-slide');
+      let targetIndex = -1;
+
+      slides.forEach((slide, index) => {
+        if (slide.dataset.mediaId == mediaId) {
+          targetIndex = index;
+        }
+      });
+
+      // Slide to matching media if found
+      if (targetIndex !== -1) {
+        mainSwiper.slideToLoop(targetIndex, 500);
+      }
+    });
+  });
+</script>
+
