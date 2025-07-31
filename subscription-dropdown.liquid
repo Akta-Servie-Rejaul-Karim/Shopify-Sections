@@ -1,0 +1,123 @@
+{% assign variant = item.variant %}
+{% assign product = variant.product %}
+
+{% if product.selling_plan_groups.size > 0 %}
+  <div class="selling-plan-wrapper">   
+    <select class="custom-selling-plan-dropdown"
+            data-line="{{ item.index | plus: 1 }}"
+            data-variant-id="{{ variant.id }}">
+
+      <!-- One-time purchase group -->
+      <optgroup label="Pay Full Price">
+        <option value="null" {% unless item.selling_plan_allocation %}selected{% endunless %}>
+          One-time
+        </option>
+      </optgroup>
+
+      <!-- Subscription plans -->
+      <optgroup label="Subscribe & Save">
+        {% for group in product.selling_plan_groups %}
+          {% for plan in group.selling_plans %}
+            <option value="{{ plan.id }}"
+              {% if item.selling_plan_allocation and item.selling_plan_allocation.selling_plan.id == plan.id %}selected{% endif %}>
+              {{ plan.name }}
+            </option>
+          {% endfor %}
+        {% endfor %}
+      </optgroup>
+
+    </select>
+  </div>
+{% endif %}
+
+
+<script>
+(function () {
+  // Attach event listeners to all custom dropdowns
+  function initCustomSellingPlanDropdowns() {
+    document.querySelectorAll('.custom-selling-plan-dropdown').forEach(dropdown => {
+      if (dropdown.dataset.listenerAttached === 'true') return;
+
+      dropdown.addEventListener('change', function (e) {
+        e.stopImmediatePropagation();
+        showLoader();
+
+        const sellingPlanId = this.value === 'null' ? null : this.value;
+        const line = parseInt(this.dataset.line, 10); // ✅ FIXED: removed +1
+        const variantId = this.dataset.variantId;
+
+        console.log('Changing cart line:', {
+          line: line,
+          selling_plan: sellingPlanId,
+          variant_id: variantId
+        });
+
+        fetch('/cart/change.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            line: line,
+            selling_plan: sellingPlanId
+          })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error('Request failed: ' + res.status);
+            return res.json();
+          })
+          .then(cart => {
+            console.log('Cart updated with selling plan:', cart);
+            hideLoader();
+            renderCartDrawer();
+          })
+          .catch(err => {
+            hideLoader();
+            console.error('Error updating selling plan:', err);
+          });
+      });
+
+      dropdown.dataset.listenerAttached = 'true';
+    });
+  }
+
+  // Re-render cart drawer using section rendering
+  function renderCartDrawer() {
+    fetch('/?sections=cart-drawer')
+      .then(res => res.json())
+      .then(data => {
+        const htmlString = data['cart-drawer'];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+        const newContent = doc.querySelector('.cart-drawer');
+        const container = document.querySelector('.cart-drawer');
+
+        if (container && newContent) {
+          container.replaceWith(newContent);
+          initCustomSellingPlanDropdowns(); // Re-bind dropdowns
+        }
+
+        window.dispatchEvent(new CustomEvent('cart:updated', {
+          detail: { cartData: data }
+        }));
+      })
+      .catch(err => console.error('Drawer render error:', err));
+  }
+
+  // Initial bind on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    initCustomSellingPlanDropdowns();
+  });
+
+  // Optional loader UI
+  function showLoader() {
+    document.getElementById("free-gift-loader")?.style.setProperty("display", "flex");
+  }
+
+  function hideLoader() {
+    document.getElementById("free-gift-loader")?.style.setProperty("display", "none");
+  }
+})();
+</script>
+
