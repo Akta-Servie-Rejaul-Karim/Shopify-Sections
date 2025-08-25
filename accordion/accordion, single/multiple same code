@@ -30,10 +30,16 @@ class MyAccordion extends HTMLElement {
 
       if (!header || !content) return;
 
-      // Initialize styles for smooth animation
+      // Initialize
       content.style.overflow = "hidden";
       content.style.transition = "max-height 0.3s ease";
-      content.style.maxHeight = "0px";
+
+      if (item.classList.contains("active")) {
+        // Open by default if already active
+        content.style.maxHeight = content.scrollHeight + "px";
+      } else {
+        content.style.maxHeight = "0px";
+      }
 
       header.addEventListener("click", () => this.toggleItem(item, content));
     });
@@ -51,18 +57,16 @@ class MyAccordion extends HTMLElement {
       });
     }
 
-    // Open or toggle closed depending on mode
     if (!isActive) {
       item.classList.add("active");
       content.style.maxHeight = content.scrollHeight + "px";
     } else if (!this.single) {
-      // Only allow closing in multi mode
       item.classList.remove("active");
       content.style.maxHeight = "0px";
     }
   }
 
-  // Expose single mode as property + attribute
+  // Attribute/property API
   get single() {
     return this.hasAttribute("single") || this._single;
   }
@@ -77,7 +81,4 @@ class MyAccordion extends HTMLElement {
   }
 }
 
-// Register component once
-if (!customElements.get("my-accordion")) {
-  customElements.define("my-accordion", MyAccordion);
-}
+customElements.define("my-accordion", MyAccordion);
