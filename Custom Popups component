@@ -85,36 +85,43 @@
   </custom-popup>
 
   <script>
-    class CustomPopup extends HTMLElement {
-  connectedCallback() {
-    // Close popup when clicking the close button or outside the content
-    this.addEventListener('click', e => {
-      if (e.target.closest('.popup-close') || e.target === this) {
-        this.close();
+   class CustomPopup extends HTMLElement {
+    connectedCallback() {
+      // Move popup to body to avoid width constraints
+      if (!this.isConnectedToBody) {
+        document.body.appendChild(this);
+        this.isConnectedToBody = true;
       }
-    });
-
-    // Attach click event to all buttons pointing to this popup
-    const popupId = `#${this.id}`;
-    document.querySelectorAll(`.popup-trigger[data-popup="${popupId}"]`).forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.open();
+  
+      // Close popup when clicking the close button or outside the content
+      this.addEventListener('click', e => {
+        if (e.target.closest('.popup-close') || e.target === this) {
+          this.close();
+        }
       });
-    });
+  
+      // Attach click event to all buttons pointing to this popup
+      const popupId = `#${this.id}`;
+      document.querySelectorAll(`.popup-trigger[data-popup="${popupId}"]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.open();
+        });
+      });
+    }
+  
+    open() {
+      this.style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // prevent page scroll
+    }
+  
+    close() {
+      this.style.display = 'none';
+      document.body.style.overflow = ''; // restore scroll
+    }
   }
+  
+  customElements.define('custom-popup', CustomPopup);
 
-  open() {
-    this.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Prevent page scroll
-  }
-
-  close() {
-    this.style.display = 'none';
-    document.body.style.overflow = ''; // Restore page scroll
-  }
-}
-
-customElements.define('custom-popup', CustomPopup);
 
   </script>
 
