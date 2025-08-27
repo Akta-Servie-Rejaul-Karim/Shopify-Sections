@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Popups</title>
+  <style>
+    /* Popup overlay */
+    custom-popup {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    /* Popup inner content */
+    custom-popup .popup-content {
+      background: #fff;
+      border-radius: 8px;
+      max-width: 700px;
+      width: 90%;
+      padding: 32px 24px 24px 24px;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      animation: popup-fade-in 0.3s;
+      overflow: auto;
+      height: 100%;
+      max-height: fit-content;
+    }
+
+    /* Close button */
+    custom-popup .popup-close {
+      position: absolute;
+      top: -4px;
+      right: 10px;
+      font-size: 24px;
+      color: #333;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    custom-popup .popup-close:hover {
+      color: #f68b1e;
+    }
+
+    /* Optional fade-in animation */
+    @keyframes popup-fade-in {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Buttons -->
+  <button class="popup-trigger" data-popup="#popup-size-chart">Open Size Chart</button>
+  <button class="popup-trigger" data-popup="#popup-color-chart">Open Color Chart</button>
+  <button class="popup-trigger" data-popup="#popup-size-chart">Another Size Chart Button</button>
+
+  <!-- Popups -->
+  <custom-popup id="popup-size-chart">
+    <div class="popup-content">
+      <span class="popup-close">×</span>
+      <div class="popup-content-inner">
+        <h2>Size Chart</h2>
+        <p>All size information goes here...</p>
+      </div>
+    </div>      
+  </custom-popup>
+
+  <custom-popup id="popup-color-chart">
+    <div class="popup-content">
+      <span class="popup-close">×</span>
+      <div class="popup-content-inner">
+        <h2>Color Chart</h2>
+        <p>All color information goes here...</p>
+      </div>
+    </div>      
+  </custom-popup>
+
+  <script>
+    // Define a reusable CustomPopup element
+    class CustomPopup extends HTMLElement {
+      connectedCallback() {
+        // Close popup when clicking the close button or outside the content
+        this.addEventListener('click', e => {
+          if (e.target.closest('.popup-close') || e.target === this) {
+            this.style.display = 'none';
+          }
+        });
+
+        // Attach click event to all buttons pointing to this popup
+        const popupId = `#${this.id}`;
+        document.querySelectorAll(`.popup-trigger[data-popup="${popupId}"]`).forEach(btn => {
+          btn.addEventListener('click', () => {
+            this.open();
+          });
+        });
+      }
+
+      // Open popup
+      open() {
+        this.style.display = 'flex';
+      }
+    }
+
+    // Register the custom element
+    customElements.define('custom-popup', CustomPopup);
+  </script>
+
+</body>
+</html>
