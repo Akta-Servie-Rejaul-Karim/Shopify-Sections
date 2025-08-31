@@ -1,0 +1,74 @@
+<style>
+  my-accordion .border{{ block.id }} {
+    {% if block.settings.border_top != false %}
+      border-top: 1px solid rgba(0, 0, 0);
+    {% endif %}
+    {% if block.settings.border_bottom != false %}
+      border-bottom: 1px solid rgba(0, 0, 0);
+    {% endif %}
+  }
+  
+my-accordion .accordion-item + .accordion-item {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+my-accordion .accordion-header {
+  padding: 14px 0;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  justify-content: space-between;
+}
+
+my-accordion .accordion-header h3 {
+  margin: 0;
+  color: #000;
+  font-family: "Montserrat", sans-serif;
+  font-size: 21px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 30px;
+  letter-spacing: -0.63px;
+}
+
+
+my-accordion .accordion-header > * {
+  margin: 0;
+}
+my-accordion .acc-icon span {
+  display: flex;
+  transition: o.3s;
+  align-items: center;
+}
+my-accordion .acc-icon .icon-minus {
+  display: none;
+}
+my-accordion .accordion-item.active span.icon-minus {
+  display: flex;
+}
+my-accordion .accordion-item.active span.icon-plus {
+  display: none;
+}
+</style>
+
+<my-accordion class="" {{ block.shopify_attributes }}>
+  <div class="accordion-item {% if  block.settings.open_by_default %}active{% endif %} border{{ block.id }}">
+    <div class="accordion-header">
+      <h3>{{ block.settings.accordion_title }}</h3>
+      <div class="acc-icon">
+        <span class="icon-plus">
+          {% render 'plus' %}
+        </span>
+        <span class="icon-minus">
+          {% render 'minus' %}
+        </span>
+      </div>
+    </div>
+    <div class="accordion-content">
+      {{ block.settings.accordion_details }}
+    </div>
+  </div>
+</my-accordion>

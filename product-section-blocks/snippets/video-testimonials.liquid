@@ -1,0 +1,107 @@
+<style>
+  .testimonial-video {
+    cursor: pointer;
+  }
+  .testimonial-video video {
+    width: 100%;
+    display: block;
+    border-radius: 10px;  
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<div class="testimonial-slider" {{ block.shopify_attributes }}>
+  <h3 class="testimonial-title">{{ block.settings.section_title }}</h3>
+  <div class="swiper testimonial-swiper">
+    <div class="swiper-wrapper">
+      {% for i in (1..10) %}
+        {% assign video_key = 'video_' | append: i %}
+        {% assign text_key = 'text_' | append: i %}
+
+        {% if block.settings[video_key] != blank %}
+          <div class="swiper-slide ">
+            <div class="testimonial-slide">
+              <div class="testimonial-video">
+                {{
+                  block.settings[video_key]
+                  | video_tag: autoplay: false, loop: true, muted: false, controls: false, image_size: '1200x'
+                }}
+                <button class="video-play-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.20575 0.270704C1.76391 -0.521984 0 0.52117 0 2.16654V24.92C0 26.6138 1.85795 27.6505 3.29934 26.7613L22.8025 14.7302C24.213 13.8599 24.1613 11.7916 22.7088 10.9931L3.20575 0.270704Z" fill="#F2F2F1"/>
+                  </svg>
+                </button>
+              </div>
+              {% if block.settings[text_key] != blank %}
+                <p class="testimonial-text">{{ block.settings[text_key] }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% comment %}
+      <!-- Swiper Navigation -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
+    {% endcomment %}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    var testimonialSwiper = new Swiper('.testimonial-swiper', {
+      slidesPerView: 2.5,
+      spaceBetween: 10,
+      loop: true,
+      {% comment %} pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }, {% endcomment %}
+       breakpoints: {
+        500: { slidesPerView: 3.5 },
+        750: { slidesPerView: 2.5 },
+        1050: { slidesPerView: 3.5 },
+      },
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const videoWrappers = document.querySelectorAll('.testimonial-video');
+
+    videoWrappers.forEach((wrapper) => {
+      const video = wrapper.querySelector('video');
+      const playBtn = wrapper.querySelector('.video-play-btn');
+
+      // Click anywhere inside wrapper (video OR button)
+      wrapper.addEventListener('click', function () {
+        if (video.paused) {
+          // Pause all other videos
+          document.querySelectorAll('.testimonial-video video').forEach((v) => {
+            if (v !== video) {
+              v.pause();
+              v.nextElementSibling.style.display = 'flex'; // show play button again
+            }
+          });
+
+          video.play();
+          playBtn.style.display = 'none';
+        } else {
+          video.pause();
+          playBtn.style.display = 'flex';
+        }
+      });
+    });
+  });
+</script>
