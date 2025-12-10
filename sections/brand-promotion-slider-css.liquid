@@ -73,7 +73,7 @@
           {% if block.settings.logo != blank %}
             <div class="press-marquee__item" {{ block.shopify_attributes }}>
               <img
-                src="{{ block.settings.logo | img_url: 'medium' }}"
+                src="{{ block.settings.logo | img_url: 'master' }}"
                 alt="{{ block.settings.alt_text | default: 'icon image' }}"
                 loading="lazy"
                 height=""
