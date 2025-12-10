@@ -1,0 +1,158 @@
+<style>
+  #{{ section.id }} {
+    overflow: hidden;
+    background: {{ section.settings.background_color | default: '#ffffff' }};
+    padding-top: {{ section.settings.padding_top | default: 24 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 24 }}px;
+  }
+
+  #{{ section.id }} .press-marquee__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    white-space: nowrap;
+    font-size: 0;
+  }
+
+  #{{ section.id }} .press-marquee__slide {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0;
+    animation: press-scroll {{ section.settings.speed | default: 5 }}s linear infinite;
+    gap: {{ section.settings.gap | default: 40 }}px;
+    margin-right: 30px;
+  }
+
+  #{{ section.id }}:hover .press-marquee__slide {
+      animation-play-state: paused;
+   }
+
+  #{{ section.id }} .press-marquee__item {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+
+
+  #{{ section.id }} .press-marquee__item img {
+    display: block;
+    height: {{ section.settings.logo_height | default: 60 }}px;
+    width: auto;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    transition: .3s ease;
+  }
+
+
+
+  @keyframes press-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+
+   @media (max-width: 600px) {
+      #{{ section.id }} {
+        padding-top: {{ section.settings.padding_top | default: 24 | times: 0.75 }}px;
+        padding-bottom: {{ section.settings.padding_bottom | default: 24 | times: 0.75 }}px;
+      }
+    }
+</style>
+
+<section id="{{ section.id }}" class="press-marquee" aria-label="Press logos">
+  <div class="press-marquee__track">
+    {% for i in (1..4) %}
+      <div class="press-marquee__slide">
+        {% for block in section.blocks %}
+          {% if block.settings.logo != blank %}
+            <div class="press-marquee__item" {{ block.shopify_attributes }}>
+              <img
+                src="{{ block.settings.logo | img_url: 'medium' }}"
+                alt="{{ block.settings.alt_text | default: 'icon image' }}"
+                loading="lazy"
+                height=""
+                width=""
+              >
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Akta marquee",
+  "settings": [
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height (px)",
+      "min": 20,
+      "max": 200,
+      "step": 2,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap",
+      "min": 8,
+      "max": 120,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll speed (seconds)",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top (px)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom (px)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo image" },
+        { "type": "text", "id": "alt_text", "label": "Alt text (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 24,
+  "presets": [{ "name": "Akta marquee", "category": "Media" }]
+}
+{% endschema %}
