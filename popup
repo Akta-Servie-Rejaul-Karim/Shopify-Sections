@@ -1,0 +1,79 @@
+/* <button type="button" class="discount-link" data-popup-open="popup-1">
+    <span>{{ section.settings.modal_title }}</span>
+    {% render 'icons', type: 'arrow' %}
+  </button>
+
+  <div class="akta-popup" data-popup="popup-1">
+    <div class="akta-popup-overlay" data-popup-close></div>
+
+    <div class="akta-popup-content">
+      <button type="button" class="akta-popup-close" data-popup-close aria-label="Close">
+        {% render 'icons', type: 'close' %}
+      </button>
+
+      content 
+
+    </div>
+  </div> */
+
+
+(function () {
+    const body = document.body;
+    const BODY_CLASS = 'is-active-popup';
+    const popupStack = [];
+
+    // OPEN
+    document.addEventListener('click', function (e) {
+      const opener = e.target.closest('[data-popup-open]');
+      if (!opener) return;
+
+      const id = opener.getAttribute('data-popup-open');
+      const popup = document.querySelector('[data-popup="' + id + '"]');
+      if (!popup) return;
+
+      openPopup(popup);
+    });
+
+    // CLOSE (only top popup)
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-popup-close]')) return;
+      closeTopPopup();
+    });
+
+    // ESC close (top only)
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && popupStack.length) {
+        closeTopPopup();
+      }
+    });
+
+    function openPopup(popup) {
+      if (popupStack.includes(popup)) return;
+
+      popup.classList.add('is-active');
+      popupStack.push(popup);
+
+      if (!body.classList.contains(BODY_CLASS)) {
+        body.classList.add(BODY_CLASS);
+      }
+
+      updateZIndex();
+    }
+
+    function closeTopPopup() {
+      const popup = popupStack.pop();
+      if (!popup) return;
+
+      popup.classList.remove('is-active');
+
+      if (!popupStack.length) {
+        body.classList.remove(BODY_CLASS);
+      }
+    }
+
+    function updateZIndex() {
+      popupStack.forEach((popup, i) => {
+        popup.style.zIndex = 9999999999 + i;
+      });
+    }
+  })();
