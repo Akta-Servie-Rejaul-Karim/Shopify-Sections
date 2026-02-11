@@ -1,0 +1,123 @@
+{{ 'akta-media-gallery.css' | asset_url | stylesheet_tag }}
+<div class="akta-media-gallery">
+  <div
+    style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+    class="swiper mySwiper2 main-media-gallery"
+  >
+    <div class="swiper-wrapper">
+      {% for media in product.media %}
+        <div class="swiper-slide" data-media-id="{{  media.id }}">
+          <img src="{{ media |  image_url }}" width="" height="" alt="{{ media.alt }}">
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="gallery-thumb-wrapper">
+    <div thumbsSlider="" class="swiper mySwiper thumb-media-gallery">
+      <div class="swiper-wrapper">
+        {% for media in product.media %}
+          <div class="swiper-slide" data-media-id="{{  media.id }}">
+            <img src="{{ media |  image_url }}" width="" height="" alt="{{ media.alt }}">
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="akta-gallery-nav">
+      <div class="swiper-button-prev">{%- render 'icons', type: 'arrow-left' -%}</div>
+      <div class="swiper-pagination mrk"></div>
+      <div class="swiper-button-next">{%- render 'icons', type: 'arrow-right' -%}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Initialize Swiper -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    var swiper = new Swiper('.thumb-media-gallery', {
+      loop: true,
+      slidesPerView: 'auto',
+      freeMode: true,
+      watchSlidesProgress: true,
+      breakpoints: {
+        0: { spaceBetween: 8, slidesPerView: 3 },
+        476: { spaceBetween: 16, slidesPerView: 'auto' }
+      }
+    });
+
+    var swiper2 = new Swiper('.main-media-gallery', {
+      loop: true,
+      spaceBetween: 16,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
+      pagination: {
+        el: '.swiper-pagination.mrk',
+        dynamicBullets: true,
+        dynamicMainBullets: 1
+      },
+      thumbs: { swiper }
+    });
+
+    const productData = {{ product | json }};
+
+    // ---------------------------
+    // SHARED FUNCTION
+    // ---------------------------
+    function syncVariantMediaById(variantId) {
+      if (!variantId) return;
+
+      const variant = productData.variants.find(
+        (v) => String(v.id) === String(variantId)
+      );
+
+      if (!variant || !variant.featured_media) return;
+
+      const mediaId = variant.featured_media.id;
+
+      const slides = document.querySelectorAll(
+        '.main-media-gallery .swiper-slide'
+      );
+
+      let targetIndex = -1;
+
+      slides.forEach((slide, index) => {
+        if (slide.dataset.mediaId == mediaId) {
+          targetIndex = index;
+        }
+      });
+
+      if (targetIndex !== -1) {
+        swiper2.slideToLoop(targetIndex, 300);
+      }
+    }
+
+    // ---------------------------
+    // ✅ ON PAGE LOAD
+    // ---------------------------
+    const checkedInput = document.querySelector(
+      'variant-selects input[type="radio"]:checked'
+    );
+
+    if (checkedInput) {
+      syncVariantMediaById(
+        checkedInput.getAttribute('data_variant_id')
+      );
+    }
+
+    // ---------------------------
+    // ✅ ON VARIANT CHANGE
+    // ---------------------------
+    subscribe(PUB_SUB_EVENTS.optionValueSelectionChange, (eventData) => {
+      const target = eventData.data.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      const selectedVariantId =
+        target.getAttribute('data_variant_id');
+
+      syncVariantMediaById(selectedVariantId);
+    });
+
+  });
+</script>
