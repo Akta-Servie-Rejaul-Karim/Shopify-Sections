@@ -1,0 +1,228 @@
+
+# 📘 responsive-image.liquid — Render Usage Guide
+
+Save this file as:
+
+```
+/docs/responsive-image-usage.md
+```
+
+or anywhere in your theme for future reference.
+
+---
+
+## ✅ Snippet Name
+
+```
+responsive-image
+```
+
+Location:
+
+```
+snippets/responsive-image.liquid
+```
+
+---
+
+# 🧩 Basic Render
+
+Use when you just need an image.
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image
+%}
+```
+
+✔ Responsive
+✔ Lazy loading
+✔ Full width (100vw)
+✔ No class added
+
+---
+
+# 🎨 Render With CSS Class
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image,
+  class: 'banner__image'
+%}
+```
+
+Adds class only if provided.
+
+Output example:
+
+```html
+<img class="banner__image">
+```
+
+---
+
+# 📐 Render With Custom Sizes
+
+Control how much viewport width image occupies.
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image,
+  sizes: '(min-width: 750px) 50vw, 100vw'
+%}
+```
+
+### Common Sizes Examples
+
+| Layout            | sizes                            |
+| ----------------- | -------------------------------- |
+| Full width banner | `100vw`                          |
+| Two columns       | `(min-width: 750px) 50vw, 100vw` |
+| 3-column grid     | `(min-width: 990px) 33vw, 100vw` |
+| Product grid      | `(min-width: 1200px) 25vw, 50vw` |
+
+---
+
+# ⚡ Hero Image (Eager Loading)
+
+Use ONLY for above-the-fold images.
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image,
+  loading: 'eager'
+%}
+```
+
+Default loading is lazy.
+
+---
+
+# ✅ Full Example (All Options)
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image,
+  class: 'banner__media-image-half',
+  sizes: '(min-width: 750px) 50vw, 100vw',
+  loading: 'lazy'
+%}
+```
+
+---
+
+# 🧠 Conditional Class Example
+
+```liquid
+{% render 'responsive-image',
+  image: section.settings.image,
+  class: section.settings.image_2 != blank
+    ? 'banner__media-image-half'
+    : ''
+%}
+```
+
+Class added only when condition is true.
+
+---
+
+# 🛍 Product Image Example
+
+```liquid
+{% render 'responsive-image',
+  image: product.featured_image,
+  sizes: '(min-width: 990px) 25vw, 50vw'
+%}
+```
+
+---
+
+# 🧱 Block Image Example
+
+```liquid
+{% render 'responsive-image',
+  image: block.settings.image
+%}
+```
+
+---
+
+# 📋 Parameters Reference
+
+| Parameter | Required | Default | Description             |
+| --------- | -------- | ------- | ----------------------- |
+| `image`   | ✅ Yes    | —       | Shopify image object    |
+| `class`   | ❌ No     | none    | Optional CSS class      |
+| `sizes`   | ❌ No     | `100vw` | Responsive layout width |
+| `loading` | ❌ No     | `lazy`  | `lazy` or `eager`       |
+
+---
+
+# ✅ Built-in Features (Automatic)
+
+* Responsive `srcset`
+* Retina (Hi-DPI) support
+* Shopify CDN resizing
+* Prevents image upscaling
+* CLS-safe width & height
+* Lazy loading by default
+* ALT text escaping
+
+---
+
+# ⚠️ Best Practices
+
+✅ Upload images at **2× display size**
+✅ Use `loading: 'eager'` only once per page
+✅ Always pass real Shopify image object
+❌ Do not remove width/height attributes
+
+---
+
+# 🏆 Recommended Usage Pattern
+
+| Section Type   | Usage         |
+| -------------- | ------------- |
+| Hero banner    | eager loading |
+| Content images | lazy loading  |
+| Product cards  | custom sizes  |
+| Split layout   | 50vw sizes    |
+
+---
+
+**End of File**
+
+
+
+{%- liquid
+  assign img = image
+  assign img_class = class | default: ''
+  assign img_sizes = sizes | default: '100vw'
+  assign loading_type = loading | default: 'lazy'
+-%}
+
+{% if img != blank %}
+  <img
+    srcset="
+      {%- if img.width >= 375 -%}{{ img | image_url: width: 375 }} 375w,{%- endif -%}
+      {%- if img.width >= 550 -%}{{ img | image_url: width: 550 }} 550w,{%- endif -%}
+      {%- if img.width >= 750 -%}{{ img | image_url: width: 750 }} 750w,{%- endif -%}
+      {%- if img.width >= 1100 -%}{{ img | image_url: width: 1100 }} 1100w,{%- endif -%}
+      {%- if img.width >= 1500 -%}{{ img | image_url: width: 1500 }} 1500w,{%- endif -%}
+      {%- if img.width >= 1780 -%}{{ img | image_url: width: 1780 }} 1780w,{%- endif -%}
+      {%- if img.width >= 2000 -%}{{ img | image_url: width: 2000 }} 2000w,{%- endif -%}
+      {%- if img.width >= 3000 -%}{{ img | image_url: width: 3000 }} 3000w,{%- endif -%}
+      {%- if img.width >= 3840 -%}{{ img | image_url: width: 3840 }} 3840w,{%- endif -%}
+      {{ img | image_url }} {{ img.width }}w
+    "
+    sizes="{{ img_sizes }}"
+    src="{{ img | image_url: width: 1500 }}"
+    loading="{{ loading_type }}"
+    alt="{{ img.alt | escape }}"
+    width="{{ img.width }}"
+    height="{{ img.width | divided_by: img.aspect_ratio }}"
+    {% if img_class != blank %}
+      class="{{ img_class }}"
+    {% endif %}
+  >
+{% endif %}
